@@ -1,0 +1,30 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+{% include 'store/navbar.html' %}
+<div class="row">
+	<div class="col-md-6">
+		<div class="card card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form}}
+                <input type="submit" name="submit" id="" value="GO">
+            </form>
+            {{form.errors}}
+        </div>
+    </div>
+</div>
+
+<style>
+input {
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    }
+
+</style>
+{% endblock %}
