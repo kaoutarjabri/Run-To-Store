@@ -57,6 +57,15 @@ def home(request):
     return render(request, 'store/home.html', context)
 
 def profile(request):
+
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order , created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitems_set.all() #setting the child value (orderitem(class)) from the parent value(order(class)(FK))
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items':0, 'shipping':False}
     customer = request.user.customer
     form = CustomerForm(instance=customer)
 
@@ -66,7 +75,7 @@ def profile(request):
             form.save()
 
 
-    context = {'form': form}
+    context = {'form': form,'items': items,'order':order, 'cartItems':cartItems}
     return render(request, 'store/profile.html', context)
 
 def store(request):
@@ -75,7 +84,6 @@ def store(request):
         order , created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitems_set.all() #setting the child value (orderitem(class)) from the parent value(order(class)(FK))
         cartItems = order.get_cart_items
-        # wishedItems = WishedItems.objects.count()
     else:
         items = []
         order = {'get_cart_total': 0, 'get_cart_items':0, 'shipping':False}
@@ -98,7 +106,18 @@ def productview(request, pk):
     # order , created = Order.objects.get_or_create(customer=customer, complete=False)
     # cartItems = order.get_cart_items
 # 'cartItems':cartItems
-    context = {'product': product, }
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order , created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitems_set.all() #setting the child value (orderitem(class)) from the parent value(order(class)(FK))
+        cartItems = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items':0, 'shipping':False}
+        cartItems = order['get_cart_items']
+
+
+    context = {'product': product,'items': items,'order':order, 'cartItems':cartItems }
     return render(request, 'store/product.html', context)
 
 def createProduct(request):
